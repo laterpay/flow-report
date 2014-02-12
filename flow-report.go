@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"github.com/wsxiaoys/terminal/color"
 	"io/ioutil"
@@ -19,6 +20,7 @@ var (
 	repos     = []Repo{}
 	re        = regexp.MustCompile(`\s[a-f0-9]{7}\s`)
 	staleDate = time.Now().Truncate(time.Duration(time.Hour * 24 * 30 * 2))
+	verbose   = false
 )
 
 type featureBranch struct {
@@ -70,6 +72,8 @@ func init() {
 	if err != nil {
 		log.Fatal("Git not found")
 	}
+	flag.BoolVar(&verbose, "verbose", false, "Enable verbose logging")
+	flag.Parse()
 }
 
 func parseBranches(output string) (ri []featureBranch) {
@@ -139,6 +143,9 @@ func parseLog(output string, repo *Repo) (bm []branchMerge) {
 }
 
 func runCommand(path, command, args string) (string, error) {
+	if verbose {
+		log.Printf("%s %s %s\n", path, command, args)
+	}
 	cmd := exec.Command(command, strings.Split(args, " ")...)
 	cmd.Dir = path
 	var out bytes.Buffer
