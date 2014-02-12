@@ -7,7 +7,9 @@ import (
 	"github.com/wsxiaoys/terminal/color"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -188,6 +190,17 @@ func inspectRepository(repo *Repo) {
 
 }
 
+func exists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
+}
+
 func buildContext() Context {
 
 	context := Context{
@@ -200,7 +213,7 @@ func buildContext() Context {
 		log.Fatal("Repohome invalid")
 	}
 	for _, f := range temps {
-		if f.IsDir() {
+		if f.IsDir() && exists(filepath.Join(f.Name(), ".git")) {
 			context.Repos = append(context.Repos, NewRepo(f.Name()))
 		}
 	}
