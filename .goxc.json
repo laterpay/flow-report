@@ -1,0 +1,8 @@
+{
+	"ArtifactsDest": "./bin",
+	"Arch": "amd64",
+	"Os": "linux darwin windows",
+	"BuildConstraints": "linux,windows,darwin",
+	"PackageVersion": "0.1",
+	"ConfigVersion": "0.9"
+}
