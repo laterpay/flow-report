@@ -213,7 +213,15 @@ func buildContext() Context {
 		log.Fatal("Repohome invalid")
 	}
 	for _, f := range temps {
-		if f.IsDir() && exists(filepath.Join(f.Name(), ".git")) {
+		// ignore files,
+		if !f.IsDir() {
+			continue
+		}
+		// ignore anything which starts with a dot. (Like .idea)
+		if strings.HasPrefix(f.Name(), ".") {
+			continue
+		}
+		if exists(filepath.Join(f.Name(), ".git")) {
 			context.Repos = append(context.Repos, NewRepo(f.Name()))
 		}
 	}
