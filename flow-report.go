@@ -23,6 +23,7 @@ var (
 	re        = regexp.MustCompile(`\s[a-f0-9]{7}\s`)
 	staleDate = time.Now().Truncate(time.Duration(time.Hour * 24 * 30 * 2))
 	verbose   = false
+	branch    = ""
 )
 
 type featureBranch struct {
@@ -75,6 +76,7 @@ func init() {
 		log.Fatal("Git not found")
 	}
 	flag.BoolVar(&verbose, "verbose", false, "Enable verbose logging")
+	flag.StringVar(&branch, "branch", "", "Print only the name of this feature branch")
 	flag.Parse()
 }
 
@@ -254,6 +256,10 @@ func main() {
 	context := buildContext()
 
 	for f, r := range context.featureBranchOnRepos {
+
+		if branch != "" && branch != f {
+			continue
+		}
 
 		color.Print("@g", fmt.Sprintf("Feature \"%s\" exists on %d repos\n", f, len(r)))
 		partiallyMerged := false
